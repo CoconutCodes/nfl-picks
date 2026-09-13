@@ -6,9 +6,9 @@
   <title>NFL Weekly Pick 'Em</title>
   <style>
     :root {
-      --bg: #0f172a;
-      --card-bg: #1e293b;
-      --border: #334155;
+      --bg: #090d16;
+      --card-bg: #131c2e;
+      --border: #233148;
       --text: #f8fafc;
       --text-muted: #94a3b8;
       --accent: #22c55e;
@@ -21,25 +21,25 @@
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
       background-color: var(--bg);
       color: var(--text);
-      padding: 20px;
+      padding: 16px;
       display: flex;
       justify-content: center;
     }
 
     .container {
       width: 100%;
-      max-width: 600px;
+      max-width: 1000px;
     }
 
     header {
-      margin-bottom: 24px;
+      margin-bottom: 16px;
       text-align: center;
     }
 
     h1 {
       font-size: 1.8rem;
       font-weight: 800;
-      margin-bottom: 6px;
+      margin-bottom: 4px;
       background: linear-gradient(to right, #38bdf8, #22c55e);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
@@ -47,16 +47,16 @@
 
     p.subtitle {
       color: var(--text-muted);
-      font-size: 0.9rem;
+      font-size: 0.85rem;
       margin-bottom: 12px;
     }
 
     .controls-box {
       background: var(--card-bg);
       border: 1px solid var(--border);
-      padding: 16px;
+      padding: 14px;
       border-radius: 12px;
-      margin-bottom: 20px;
+      margin-bottom: 16px;
       display: flex;
       flex-direction: column;
       gap: 10px;
@@ -68,17 +68,17 @@
     }
 
     input[type="text"] {
-      flex: 1;
-      padding: 10px 14px;
+      padding: 8px 12px;
       border-radius: 8px;
       border: 1px solid var(--border);
-      background: #0f172a;
+      background: #090d16;
       color: #fff;
       font-size: 0.85rem;
+      flex: 1;
     }
 
     button.btn {
-      padding: 10px 16px;
+      padding: 8px 14px;
       border-radius: 8px;
       border: none;
       background: var(--accent);
@@ -86,6 +86,7 @@
       font-weight: 700;
       cursor: pointer;
       transition: background 0.2s;
+      font-size: 0.85rem;
     }
 
     button.btn:hover { background: var(--accent-hover); }
@@ -97,7 +98,7 @@
 
     .secondary-btn {
       flex: 1;
-      background: #334155;
+      background: #233148;
       color: #fff;
       border: none;
       padding: 8px;
@@ -106,7 +107,7 @@
       font-weight: 600;
       cursor: pointer;
     }
-    .secondary-btn:hover { background: #475569; }
+    .secondary-btn:hover { background: #334155; }
 
     .danger-btn {
       background: transparent;
@@ -115,40 +116,65 @@
     }
     .danger-btn:hover { background: rgba(239, 68, 68, 0.1); }
 
-    .games-list {
+    .week-bar {
       display: flex;
-      flex-direction: column;
-      gap: 16px;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      padding: 8px 14px;
+      border-radius: 10px;
+      margin-bottom: 16px;
+    }
+
+    .week-bar h2 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #38bdf8;
+    }
+
+    /* 2-COLUMN SIDE-BY-SIDE GRID */
+    .games-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+
+    @media (max-width: 650px) {
+      .games-grid {
+        grid-template-columns: 1fr;
+      }
     }
 
     .game-card {
       background: var(--card-bg);
       border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 16px;
+      border-radius: 10px;
+      padding: 10px 12px;
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 8px;
     }
 
     .game-header {
       display: flex;
       justify-content: space-between;
-      font-size: 0.8rem;
+      font-size: 0.72rem;
       color: var(--text-muted);
+      font-weight: 600;
     }
 
     .teams-container {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 12px;
+      gap: 8px;
     }
 
     .team-btn {
-      background: #0f172a;
-      border: 2px solid var(--border);
+      background: #090d16;
+      border: 1.5px solid var(--border);
       border-radius: 8px;
-      padding: 12px;
+      padding: 8px;
       color: var(--text);
       cursor: pointer;
       display: flex;
@@ -162,39 +188,62 @@
 
     .team-btn.selected {
       border-color: var(--accent);
-      background: rgba(34, 197, 94, 0.15);
+      background: rgba(34, 197, 94, 0.18);
+    }
+
+    .team-logo {
+      width: 32px;
+      height: 32px;
+      object-fit: contain;
     }
 
     .team-name {
       font-weight: 700;
-      font-size: 1rem;
+      font-size: 0.82rem;
+      text-align: center;
+      line-height: 1.1;
     }
 
-    .spread {
-      font-size: 0.85rem;
+    .spread-container {
+      display: flex;
+      gap: 4px;
+      align-items: center;
+      font-size: 0.78rem;
+    }
+
+    .spread-point {
       color: var(--text-muted);
+      font-weight: 600;
     }
 
-    .team-btn.selected .spread {
+    .spread-price {
+      color: #38bdf8;
+      font-size: 0.72rem;
+    }
+
+    .team-btn.selected .spread-point {
       color: var(--accent);
-      font-weight: 600;
+      font-weight: 700;
     }
 
     .status-msg {
       text-align: center;
       padding: 40px 0;
       color: var(--text-muted);
+      grid-column: span 2;
     }
 
     /* SCREENSHOT MODE STYLING */
-    body.screenshot-mode .controls-box {
-      display: none;
+    body.screenshot-mode .controls-box,
+    body.screenshot-mode .week-nav-btn {
+      display: none !important;
     }
     body.screenshot-mode header p.subtitle {
       display: none;
     }
     body.screenshot-mode {
       background: #050b14;
+      padding: 10px;
     }
   </style>
 </head>
@@ -203,32 +252,54 @@
 <div class="container">
   <header>
     <h1 id="mainTitle">NFL Pick 'Em</h1>
-    <p class="subtitle">Select your picks against the spread. Automatically saves as you click.</p>
+    <p class="subtitle">Select your picks against the spread. Grid compacts for easy screenshotting.</p>
   </header>
 
   <div class="controls-box" id="controlsBox">
     <div class="input-row">
-      <input type="text" id="playerNameInput" placeholder="Your Name (for screenshot header)..." oninput="saveName()" />
+      <input type="text" id="playerNameInput" placeholder="Your Name (e.g. Owen)..." oninput="saveName()" />
     </div>
     <div class="input-row">
       <input type="text" id="apiKeyInput" placeholder="Paste free Odds API key here..." />
-      <button class="btn" onclick="fetchGames()">Load Week</button>
+      <button class="btn" onclick="fetchGames()">Load NFL Data</button>
     </div>
     <div class="action-row">
-      <button class="secondary-btn" onclick="toggleScreenshotMode()">📸 Toggle Screenshot Mode</button>
+      <button class="secondary-btn" onclick="toggleScreenshotMode()">📸 Screenshot Mode</button>
       <button class="secondary-btn danger-btn" onclick="clearPicks()">Reset Picks</button>
     </div>
   </div>
 
-  <div id="content">
-    <div class="status-msg">Enter your API key above to load this week's NFL games & spreads.</div>
+  <div class="week-bar">
+    <button class="secondary-btn week-nav-btn" style="max-width: 90px;" onclick="changeWeek(-1)">← Prev</button>
+    <h2 id="weekLabel">Current Week</h2>
+    <button class="secondary-btn week-nav-btn" style="max-width: 90px;" onclick="changeWeek(1)">Next →</button>
+  </div>
+
+  <div id="content" class="games-grid">
+    <div class="status-msg">Enter your API key above to load NFL games & spreads.</div>
   </div>
 </div>
 
 <script>
+  const LOGO_MAP = {
+    'Arizona Cardinals': 'ari', 'Atlanta Falcons': 'atl', 'Baltimore Ravens': 'bal',
+    'Buffalo Bills': 'buf', 'Carolina Panthers': 'car', 'Chicago Bears': 'chi',
+    'Cincinnati Bengals': 'cin', 'Cleveland Browns': 'cle', 'Dallas Cowboys': 'dal',
+    'Denver Broncos': 'den', 'Detroit Lions': 'det', 'Green Bay Packers': 'gb',
+    'Houston Texans': 'hou', 'Indianapolis Colts': 'ind', 'Jacksonville Jaguars': 'jax',
+    'Kansas City Chiefs': 'kc', 'Las Vegas Raiders': 'lv', 'Los Angeles Chargers': 'lac',
+    'Los Angeles Rams': 'lar', 'Miami Dolphins': 'mia', 'Minnesota Vikings': 'min',
+    'New England Patriots': 'ne', 'New Orleans Saints': 'no', 'New York Giants': 'nyg',
+    'New York Jets': 'nyj', 'Philadelphia Eagles': 'phi', 'Pittsburgh Steelers': 'pit',
+    'San Francisco 49ers': 'sf', 'Seattle Seahawks': 'sea', 'Tampa Bay Buccaneers': 'tb',
+    'Tennessee Titans': 'ten', 'Washington Commanders': 'was'
+  };
+
+  let allGames = [];
   let picks = JSON.parse(localStorage.getItem('nfl_picks') || '{}');
   let savedApiKey = localStorage.getItem('odds_api_key') || '';
   let savedName = localStorage.getItem('nfl_player_name') || '';
+  let currentWeekOffset = 0;
   let isScreenshotMode = false;
 
   if (savedName) {
@@ -241,6 +312,12 @@
     fetchGames();
   }
 
+  function getLogoUrl(teamName) {
+    const code = LOGO_MAP[teamName];
+    if (code) return `https://a.espncdn.com/i/teamlogos/nfl/500/${code}.png`;
+    return 'https://a.espncdn.com/i/teamlogos/nfl/500/nfl.png';
+  }
+
   function saveName() {
     const name = document.getElementById('playerNameInput').value.trim();
     localStorage.setItem('nfl_player_name', name);
@@ -249,11 +326,7 @@
 
   function updateTitle(name) {
     const titleEl = document.getElementById('mainTitle');
-    if (name) {
-      titleEl.innerText = `${name}'s NFL Picks`;
-    } else {
-      titleEl.innerText = `NFL Pick 'Em`;
-    }
+    titleEl.innerText = name ? `${name}'s NFL Picks` : `NFL Pick 'Em`;
   }
 
   async function fetchGames() {
@@ -266,44 +339,72 @@
     }
 
     localStorage.setItem('odds_api_key', apiKey);
-    content.innerHTML = '<div class="status-msg">Loading current NFL games...</div>';
+    content.innerHTML = '<div class="status-msg">Loading NFL games & spreads...</div>';
 
     try {
       const response = await fetch(`https://api.the-odds-api.com/v4/sports/americanfootball_nfl/odds/?apiKey=${apiKey}&regions=us&markets=spreads&oddsFormat=american`);
       
-      if (!response.ok) {
-        throw new Error('API key invalid or limit reached.');
-      }
+      if (!response.ok) throw new Error('API key invalid or request limit reached.');
 
-      const data = await response.json();
+      allGames = await response.json();
 
-      if (data.length === 0) {
+      if (allGames.length === 0) {
         content.innerHTML = '<div class="status-msg">No upcoming NFL games with spreads found right now.</div>';
         return;
       }
 
-      renderGames(data);
+      renderCurrentWeek();
     } catch (err) {
       content.innerHTML = `<div class="status-msg" style="color:#ef4444;">Error: ${err.message}</div>`;
     }
   }
 
-  function renderGames(games) {
+  function renderCurrentWeek() {
+    if (!allGames.length) return;
+
+    const sortedGames = [...allGames].sort((a, b) => new Date(a.commence_time) - new Date(b.commence_time));
+    const firstGameDate = new Date(sortedGames[0].commence_time);
+    
+    const weekStart = new Date(firstGameDate);
+    weekStart.setDate(weekStart.getDate() + (currentWeekOffset * 7));
+    
+    const weekEnd = new Date(weekStart);
+    weekEnd.setDate(weekEnd.getDate() + 7);
+
+    const weekGames = sortedGames.filter(g => {
+      const gDate = new Date(g.commence_time);
+      return gDate >= weekStart && gDate < weekEnd;
+    });
+
+    const gamesToRender = weekGames.length > 0 ? weekGames : sortedGames;
+
+    document.getElementById('weekLabel').innerText = `Games (${weekStart.toLocaleDateString([], {month:'short', day:'numeric'})} - ${weekEnd.toLocaleDateString([], {month:'short', day:'numeric'})})`;
+
+    renderGrid(gamesToRender);
+  }
+
+  function renderGrid(games) {
     const content = document.getElementById('content');
-    let html = '<div class="games-list">';
+    let html = '';
 
     games.forEach(game => {
       const bookmaker = game.bookmakers[0];
-      let homeSpread = "N/A";
-      let awaySpread = "N/A";
+      let homePoint = "N/A", homePrice = "";
+      let awayPoint = "N/A", awayPrice = "";
 
       if (bookmaker && bookmaker.markets.length > 0) {
         const outcomes = bookmaker.markets[0].outcomes;
         const homeOutcome = outcomes.find(o => o.name === game.home_team);
         const awayOutcome = outcomes.find(o => o.name === game.away_team);
 
-        if (homeOutcome) homeSpread = formatSpread(homeOutcome.point);
-        if (awayOutcome) awaySpread = formatSpread(awayOutcome.point);
+        if (homeOutcome) {
+          homePoint = formatSpread(homeOutcome.point);
+          if (homeOutcome.price) homePrice = formatPrice(homeOutcome.price);
+        }
+        if (awayOutcome) {
+          awayPoint = formatSpread(awayOutcome.point);
+          if (awayOutcome.price) awayPrice = formatPrice(awayOutcome.price);
+        }
       }
 
       const dateStr = new Date(game.commence_time).toLocaleString([], {
@@ -316,32 +417,49 @@
         <div class="game-card">
           <div class="game-header">
             <span>${dateStr}</span>
-            <span>Spread</span>
+            <span>Spread / Odds</span>
           </div>
           <div class="teams-container">
             <button class="team-btn ${selectedPick === game.away_team ? 'selected' : ''}" 
                     onclick="makePick('${game.id}', '${escapeQuotes(game.away_team)}')">
+              <img src="${getLogoUrl(game.away_team)}" class="team-logo" alt="${game.away_team}" />
               <span class="team-name">${game.away_team}</span>
-              <span class="spread">${awaySpread}</span>
+              <div class="spread-container">
+                <span class="spread-point">${awayPoint}</span>
+                <span class="spread-price">${awayPrice}</span>
+              </div>
             </button>
             
             <button class="team-btn ${selectedPick === game.home_team ? 'selected' : ''}" 
                     onclick="makePick('${game.id}', '${escapeQuotes(game.home_team)}')">
+              <img src="${getLogoUrl(game.home_team)}" class="team-logo" alt="${game.home_team}" />
               <span class="team-name">${game.home_team}</span>
-              <span class="spread">${homeSpread}</span>
+              <div class="spread-container">
+                <span class="spread-point">${homePoint}</span>
+                <span class="spread-price">${homePrice}</span>
+              </div>
             </button>
           </div>
         </div>
       `;
     });
 
-    html += '</div>';
     content.innerHTML = html;
+  }
+
+  function changeWeek(direction) {
+    currentWeekOffset += direction;
+    renderCurrentWeek();
   }
 
   function formatSpread(point) {
     if (point > 0) return `+${point}`;
     return `${point}`;
+  }
+
+  function formatPrice(price) {
+    if (price > 0) return `(+${price})`;
+    return `(${price})`;
   }
 
   function escapeQuotes(str) {
@@ -356,13 +474,7 @@
     }
     
     localStorage.setItem('nfl_picks', JSON.stringify(picks));
-    
-    // Re-render without full fetch reload to keep UI snappy
-    const apiKey = document.getElementById('apiKeyInput').value.trim();
-    if (apiKey) {
-      // Just re-fetch silently or use cached data if preferred, but fetchGames is fast enough
-      fetchGames();
-    }
+    renderCurrentWeek();
   }
 
   function toggleScreenshotMode() {
@@ -374,7 +486,7 @@
     if (confirm('Clear all your current picks?')) {
       picks = {};
       localStorage.removeItem('nfl_picks');
-      fetchGames();
+      renderCurrentWeek();
     }
   }
 </script>
