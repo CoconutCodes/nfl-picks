@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NFL Weekly Pick 'Em</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card-bg: #1e293b;
+      --border: #334155;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --accent: #22c55e;
+      --accent-hover: #16a34a;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 600px;
+    }
+
+    header {
+      margin-bottom: 24px;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 1.8rem;
+      font-weight: 800;
+      margin-bottom: 6px;
+      background: linear-gradient(to right, #38bdf8, #22c55e);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    p.subtitle {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      margin-bottom: 12px;
+    }
+
+    .controls-box {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      padding: 16px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .input-row {
+      display: flex;
+      gap: 8px;
+    }
+
+    input[type="text"] {
+      flex: 1;
+      padding: 10px 14px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: #0f172a;
+      color: #fff;
+      font-size: 0.85rem;
+    }
+
+    button.btn {
+      padding: 10px 16px;
+      border-radius: 8px;
+      border: none;
+      background: var(--accent);
+      color: #000;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    button.btn:hover { background: var(--accent-hover); }
+
+    .action-row {
+      display: flex;
+      gap: 8px;
+    }
+
+    .secondary-btn {
+      flex: 1;
+      background: #334155;
+      color: #fff;
+      border: none;
+      padding: 8px;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .secondary-btn:hover { background: #475569; }
+
+    .danger-btn {
+      background: transparent;
+      border: 1px solid #ef4444;
+      color: #ef4444;
+    }
+    .danger-btn:hover { background: rgba(239, 68, 68, 0.1); }
+
+    .games-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .game-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .game-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .teams-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .team-btn {
+      background: #0f172a;
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      padding: 12px;
+      color: var(--text);
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.15s ease;
+    }
+
+    .team-btn:hover { border-color: #64748b; }
+
+    .team-btn.selected {
+      border-color: var(--accent);
+      background: rgba(34, 197, 94, 0.15);
+    }
+
+    .team-name {
+      font-weight: 700;
+      font-size: 1rem;
+    }
+
+    .spread {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .team-btn.selected .spread {
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .status-msg {
+      text-align: center;
+      padding: 40px 0;
+      color: var(--text-muted);
+    }
+
+    /* SCREENSHOT MODE STYLING */
+    body.screenshot-mode .controls-box {
+      display: none;
+    }
+    body.screenshot-mode header p.subtitle {
+      display: none;
+    }
+    body.screenshot-mode {
+      background: #050b14;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <header>
+    <h1 id="mainTitle">NFL Pick 'Em</h1>
+    <p class="subtitle">Select your picks against the spread. Automatically saves as you click.</p>
+  </header>
+
+  <div class="controls-box" id="controlsBox">
+    <div class="input-row">
+      <input type="text" id="playerNameInput" placeholder="Your Name (for screenshot header)..." oninput="saveName()" />
+    </div>
+    <div class="input-row">
+      <input type="text" id="apiKeyInput" placeholder="Paste free Odds API key here..." />
+      <button class="btn" onclick="fetchGames()">Load Week</button>
+    </div>
+    <div class="action-row">
+      <button class="secondary-btn" onclick="toggleScreenshotMode()">📸 Toggle Screenshot Mode</button>
+      <button class="secondary-btn danger-btn" onclick="clearPicks()">Reset Picks</button>
+    </div>
+  </div>
+
+  <div id="content">
+    <div class="status-msg">Enter your API key above to load this week's NFL games & spreads.</div>
+  </div>
+</div>
+
+<script>
+  let picks = JSON.parse(localStorage.getItem('nfl_picks') || '{}');
+  let savedApiKey = localStorage.getItem('odds_api_key') || '';
+  let savedName = localStorage.getItem('nfl_player_name') || '';
+  let isScreenshotMode = false;
+
+  if (savedName) {
+    document.getElementById('playerNameInput').value = savedName;
+    updateTitle(savedName);
+  }
+
+  if (savedApiKey) {
+    document.getElementById('apiKeyInput').value = savedApiKey;
+    fetchGames();
+  }
+
+  function saveName() {
+    const name = document.getElementById('playerNameInput').value.trim();
+    localStorage.setItem('nfl_player_name', name);
+    updateTitle(name);
+  }
+
+  function updateTitle(name) {
+    const titleEl = document.getElementById('mainTitle');
+    if (name) {
+      titleEl.innerText = `${name}'s NFL Picks`;
+    } else {
+      titleEl.innerText = `NFL Pick 'Em`;
+    }
+  }
+
+  async function fetchGames() {
+    const apiKey = document.getElementById('apiKeyInput').value.trim();
+    const content = document.getElementById('content');
+
+    if (!apiKey) {
+      alert('Please enter a free API key from the-odds-api.com');
+      return;
+    }
+
+    localStorage.setItem('odds_api_key', apiKey);
+    content.innerHTML = '<div class="status-msg">Loading current NFL games...</div>';
+
+    try {
+      const response = await fetch(`https://api.the-odds-api.com/v4/sports/americanfootball_nfl/odds/?apiKey=${apiKey}&regions=us&markets=spreads&oddsFormat=american`);
+      
+      if (!response.ok) {
+        throw new Error('API key invalid or limit reached.');
+      }
+
+      const data = await response.json();
+
+      if (data.length === 0) {
+        content.innerHTML = '<div class="status-msg">No upcoming NFL games with spreads found right now.</div>';
+        return;
+      }
+
+      renderGames(data);
+    } catch (err) {
+      content.innerHTML = `<div class="status-msg" style="color:#ef4444;">Error: ${err.message}</div>`;
+    }
+  }
+
+  function renderGames(games) {
+    const content = document.getElementById('content');
+    let html = '<div class="games-list">';
+
+    games.forEach(game => {
+      const bookmaker = game.bookmakers[0];
+      let homeSpread = "N/A";
+      let awaySpread = "N/A";
+
+      if (bookmaker && bookmaker.markets.length > 0) {
+        const outcomes = bookmaker.markets[0].outcomes;
+        const homeOutcome = outcomes.find(o => o.name === game.home_team);
+        const awayOutcome = outcomes.find(o => o.name === game.away_team);
+
+        if (homeOutcome) homeSpread = formatSpread(homeOutcome.point);
+        if (awayOutcome) awaySpread = formatSpread(awayOutcome.point);
+      }
+
+      const dateStr = new Date(game.commence_time).toLocaleString([], {
+        weekday: 'short', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
+      });
+
+      const selectedPick = picks[game.id];
+
+      html += `
+        <div class="game-card">
+          <div class="game-header">
+            <span>${dateStr}</span>
+            <span>Spread</span>
+          </div>
+          <div class="teams-container">
+            <button class="team-btn ${selectedPick === game.away_team ? 'selected' : ''}" 
+                    onclick="makePick('${game.id}', '${escapeQuotes(game.away_team)}')">
+              <span class="team-name">${game.away_team}</span>
+              <span class="spread">${awaySpread}</span>
+            </button>
+            
+            <button class="team-btn ${selectedPick === game.home_team ? 'selected' : ''}" 
+                    onclick="makePick('${game.id}', '${escapeQuotes(game.home_team)}')">
+              <span class="team-name">${game.home_team}</span>
+              <span class="spread">${homeSpread}</span>
+            </button>
+          </div>
+        </div>
+      `;
+    });
+
+    html += '</div>';
+    content.innerHTML = html;
+  }
+
+  function formatSpread(point) {
+    if (point > 0) return `+${point}`;
+    return `${point}`;
+  }
+
+  function escapeQuotes(str) {
+    return str.replace(/'/g, "\\'");
+  }
+
+  function makePick(gameId, teamName) {
+    if (picks[gameId] === teamName) {
+      delete picks[gameId];
+    } else {
+      picks[gameId] = teamName;
+    }
+    
+    localStorage.setItem('nfl_picks', JSON.stringify(picks));
+    
+    // Re-render without full fetch reload to keep UI snappy
+    const apiKey = document.getElementById('apiKeyInput').value.trim();
+    if (apiKey) {
+      // Just re-fetch silently or use cached data if preferred, but fetchGames is fast enough
+      fetchGames();
+    }
+  }
+
+  function toggleScreenshotMode() {
+    isScreenshotMode = !isScreenshotMode;
+    document.body.classList.toggle('screenshot-mode', isScreenshotMode);
+  }
+
+  function clearPicks() {
+    if (confirm('Clear all your current picks?')) {
+      picks = {};
+      localStorage.removeItem('nfl_picks');
+      fetchGames();
+    }
+  }
+</script>
+</body>
+</html>
